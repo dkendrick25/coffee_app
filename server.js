@@ -37,16 +37,19 @@ app.post('/signup', function(req, resp) {
       return;
     }
     // username exist in the DB and use needs to pick a different username
-    if(user){
+    if(user) {
       console.log('pick a diff username');
       resp.send({"status": "failed", "message": "user name is taken"});
-    }else{
+    } else {
       // save username and pswd to the database
       //bcrypt user password
       bcrypt.hash(crendentails.password, 10, function(err, encryptedPassword) {
         if (err) {
-          console.error(err.message);
-          return;
+          resp.status(500);
+          resp.json({
+            status: "fail",
+            message: "Password hash has failed" + err.message
+          });
         }
         console.log('Password:', crendentails.password);
         console.log('Encrypted password:', encryptedPassword);
@@ -58,7 +61,7 @@ app.post('/signup', function(req, resp) {
             return console.log(err);
           }
           // saved
-          res.json({"status": "ok"});
+          res.send({"status": "ok"});
         });
       });
     }
