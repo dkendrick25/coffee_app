@@ -16,8 +16,7 @@ mongoose.connect('mongodb://localhost/users');
 
 
 app.get('/options', function(req, resp){
-  resp.send({
-    grind:[
+  resp.send([
       "Extra coarse",
     	"Coarse",
     	"Medium-coarse",
@@ -25,8 +24,7 @@ app.get('/options', function(req, resp){
     	"Medium-fine",
     	"Fine",
     	"Extra fine"
-    ]
-  });
+    ]);
 });
 
 app.post('/signup', function(req, resp) {
