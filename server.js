@@ -17,14 +17,14 @@ mongoose.connect('mongodb://localhost/users');
 
 app.get('/options', function(req, resp){
   resp.send([
-      "Extra coarse",
-    	"Coarse",
-    	"Medium-coarse",
-    	"Medium",
-    	"Medium-fine",
-    	"Fine",
-    	"Extra fine"
-    ]);
+    "Extra coarse",
+    "Coarse",
+    "Medium-coarse",
+    "Medium",
+    "Medium-fine",
+    "Fine",
+    "Extra fine"
+  ]);
 });
 
 app.post('/signup', function(req, resp) {
@@ -71,57 +71,88 @@ app.post('/signup', function(req, resp) {
 app.post('/login', function(req, resp) {
   var crendentails = req.body;
   User.findById(crendentails.username, function(err, user) {
-    if (err) {
-      console.log(err.message);
-      return;
+    if (!user) {
+      resp.json({status: 'fail', message: "invaild username or password"});
     }
     bcrypt.compare(crendentails.password, user.password, function(err, matched) {
-      if (err) {
-        resp.send('Password did not match');
+      if (err || !matched) {
+        resp.send({"status": "fail", "message": "Invaild username or password"});
       }
       if (matched) {
         var token = randToken.generate(64);
+        //user.authenticationTokens.push(token);
+        //user.save(function(err) {...})
         user.update(
           {$push: {authenticationTokens: token} },
           function(err, user) {
             if(err) {
               resp.send({"status": "fail", "message": "Invaild username or password"});
             }
-            resp.send({"status": "ok", "token": token});
+            resp.json({status: "ok", token: token});
           }
         );
       }
     });
   });
 });
-//need to fix
-app.post('/orders', function(req, resp){
-  var token = req.body.token;
+//checks to see if user is logged in
+function authRequired(request, response, next) {
+  var token = request.query.token || request.body.token;
   User.findOne({authenticationTokens: token}, function(err, user){
+    request.user = user;
     if (err) {
-      req.send(err.message);
+      request.send(err.message);
+      return;
     }
-    user.update(
+
+  if(user) {
+    next();
+  } else {
+    response.json({message: 'please login'});
+  }
+  });
+}
+
+app.post('/orders', authRequired, function(req, resp){
+  // var token = req.body.token;
+  // if(!token){
+  //   resp.json({status: 'failed', message: 'please login'});
+  //   return;
+  // }
+  //
+  // User.findOne({authenticationTokens: token}, function(err, user){
+  //   if (!user) {
+  //     req.send({"status": "fail", "message": "user is not authorized"});
+  //   }
+    //user.orders.push(info.order);
+    //user.save(function(err){...})
+    req.user.update(
       {$push: {orders: req.body.order}},
       function(err, user) {
         if (err) {
-          resp.send({"status": "fail", "message": "missing required field"});
+          //to make error messages more readable
+           var validationErrors = [];
+          for (var key in err.errors) {
+            validationErrors.push(err.errors[key].message);
+          }
+          resp.send({"status": "fail", "message": "order failed" + err.message + ". " + validationErrors.join(" ")});
+          return;
         }
         resp.send({"status": "ok"});
       }
     );
 
-  });
+  // });
 });
 
-app.get("/orders", function(req, resp) {
-  var token = req.query.token;
-  User.findOne({authenticationTokens: token}, function(err, user){
-    if (err) {
-      req.send(err.message);
-    }
-    resp.send(user.orders);
-  });
+app.get("/orders", authRequired, function(req, resp) {
+  // var token = req.query.token;
+  // User.findOne({authenticationTokens: token}, function(err, user){
+  //   if (err) {
+  //     req.send(err.message);
+  //   }
+    resp.send(req.user.orders);
+  // });
 });
 
 
