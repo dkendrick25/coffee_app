@@ -114,16 +114,6 @@ function authRequired(request, response, next) {
 }
 
 app.post('/orders', authRequired, function(req, resp){
-  // var token = req.body.token;
-  // if(!token){
-  //   resp.json({status: 'failed', message: 'please login'});
-  //   return;
-  // }
-  //
-  // User.findOne({authenticationTokens: token}, function(err, user){
-  //   if (!user) {
-  //     req.send({"status": "fail", "message": "user is not authorized"});
-  //   }
     //user.orders.push(info.order);
     //user.save(function(err){...})
     req.user.update(
@@ -141,18 +131,10 @@ app.post('/orders', authRequired, function(req, resp){
         resp.send({"status": "ok"});
       }
     );
-
-  // });
 });
 
 app.get("/orders", authRequired, function(req, resp) {
-  // var token = req.query.token;
-  // User.findOne({authenticationTokens: token}, function(err, user){
-  //   if (err) {
-  //     req.send(err.message);
-  //   }
     resp.send(req.user.orders);
-  // });
 });
 
 
