@@ -3,7 +3,11 @@ var app = express();
 var session = require('express-session');
 var bodyParser = require('body-parser');
 var bcrypt = require('bcrypt');
+var cors = require('cors');
+var stripe = require('stripe')('sk_test_EvFD6hRFhXazjj9XCPomjqdo');
+// var crendentails = require("./crendentails.json");
 
+app.use(cors());
 var randToken = require('rand-token');
 
 
@@ -13,7 +17,7 @@ var User = require('./user');
 app.use(bodyParser.json());
 
 mongoose.connect('mongodb://localhost/users');
-
+// mongose.connect('mongodb://' + crendentails.username + ":" + crendentails.password + "@ds025263.mlab.com:25263/coffee_app");
 
 app.get('/options', function(req, resp){
   resp.send([
@@ -61,7 +65,7 @@ app.post('/signup', function(req, resp) {
             return console.log(err);
           }
           // saved
-          res.send({"status": "ok"});
+          resp.send({"status": "ok"});
         });
       });
     }
@@ -136,6 +140,30 @@ app.post('/orders', authRequired, function(req, resp){
 app.get("/orders", authRequired, function(req, resp) {
     resp.send(req.user.orders);
 });
+//stripe functionality
+app.post('/charge', function(request, response) {
+  var amount = request.body.amount;
+  var token = request.body.token;
+  console.log(token);
+
+  // make the charge using the credit card associated
+  // with token
+  stripe.charges.create({
+    amount: amount,
+    currency: 'usd',
+    source: token
+  }, function(err, charge) {
+    if (err) {
+      response.json({
+        status: 'fail',
+        error: err.message
+      });
+      return;
+    }
+    response.json({ status: 'ok', charge: charge });
+  });
+});
+
 
 
 app.listen(8000, function(){
