@@ -2,10 +2,10 @@ var express = require('express');
 var app = express();
 var session = require('express-session');
 var bodyParser = require('body-parser');
-var bcrypt = require('bcrypt');
+var bcrypt = require('my-bcrypt');
 var cors = require('cors');
 var stripe = require('stripe')('sk_test_EvFD6hRFhXazjj9XCPomjqdo');
-// var crendentails = require("./crendentails.json");
+var mongoCreds = require('./mongo_creds.json');
 
 app.use(cors());
 var randToken = require('rand-token');
@@ -16,8 +16,8 @@ var User = require('./user');
 
 app.use(bodyParser.json());
 
-mongoose.connect('mongodb://localhost/users');
-// mongose.connect('mongodb://' + crendentails.username + ":" + crendentails.password + "@ds025263.mlab.com:25263/coffee_app");
+// mongoose.connect('mongodb://localhost/users');
+mongoose.connect('mongodb://' + mongoCreds.username + ":" + mongoCreds.password + "@ds025263.mlab.com:25263/coffee_app");
 
 app.get('/options', function(req, resp){
   resp.send([
