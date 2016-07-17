@@ -32,10 +32,10 @@ app.get('/options', function(req, resp){
 });
 
 app.post('/signup', function(req, resp) {
-  var crendentails = req.body;
+  var credentials = req.body;
   var encryptedPassword;
 
-  User.findById(crendentails.username, function(err, user){
+  User.findById(credentials.username, function(err, user){
     if(err){
       console.error(err.message);
       return;
@@ -47,7 +47,7 @@ app.post('/signup', function(req, resp) {
     } else {
       // save username and pswd to the database
       //bcrypt user password
-      bcrypt.hash(crendentails.password, 10, function(err, encryptedPassword) {
+      bcrypt.hash(credentials.password, 10, function(err, encryptedPassword) {
         if (err) {
           resp.status(500);
           resp.json({
@@ -55,10 +55,10 @@ app.post('/signup', function(req, resp) {
             message: "Password hash has failed" + err.message
           });
         }
-        console.log('Password:', crendentails.password);
+        console.log('Password:', credentials.password);
         console.log('Encrypted password:', encryptedPassword);
         User.create({
-          _id: crendentails.username,
+          _id: credentials.username,
           password: encryptedPassword
         }, function(err, user){
           if(err){
@@ -73,12 +73,12 @@ app.post('/signup', function(req, resp) {
 });
 
 app.post('/login', function(req, resp) {
-  var crendentails = req.body;
-  User.findById(crendentails.username, function(err, user) {
+  var credentials = req.body;
+  User.findById(credentials.username, function(err, user) {
     if (!user) {
       resp.json({status: 'fail', message: "invaild username or password"});
     }
-    bcrypt.compare(crendentails.password, user.password, function(err, matched) {
+    bcrypt.compare(credentials.password, user.password, function(err, matched) {
       if (err || !matched) {
         resp.send({"status": "fail", "message": "Invaild username or password"});
       }
