@@ -22,9 +22,9 @@ This is an E-commerce coffee subscription website built using the MEAN stack. Th
 [Check it out here](http://kendrickdcroasters.surge.sh/#/home)
 
 ##Screen Shots
-![Home Page](coffee_site_frontend/images/homepage.png)
-![Register](coffee_site_frontend/images/Register.png)
-![Login](coffee_site_frontend/images/Login.png)
-![Options](coffee_site_frontend/images/Options.png)
-![Delivery](coffee_site_frontend/images/Delivery.png)
-![Payment](coffee_site_frontend/images/Payment.png)
+![Home Page](/coffee_site_frontend/images/homepage.png)
+![Register](/coffee_site_frontend/images/Register.png)
+![Login](/coffee_site_frontend/images/Login.png)
+![Options](/coffee_site_frontend/images/Options.png)
+![Delivery](/coffee_site_frontend/images/Delivery.png)
+![Payment](/coffee_site_frontend/images/Payment.png)
