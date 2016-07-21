@@ -4,7 +4,7 @@ var session = require('express-session');
 var bodyParser = require('body-parser');
 var bcrypt = require('my-bcrypt');
 var cors = require('cors');
-var stripe = require('stripe')('sk_test_EvFD6hRFhXazjj9XCPomjqdo');
+var stripe = require('stripe')('sk_test_4QMlsO2oj4cgM6qebUI2GMZ7');
 var mongoCreds = require('./mongo_creds.json');
 
 app.use(cors());
